@@ -1,0 +1,47 @@
+using HorizonSideRobots
+
+function random_place(r)
+    x = rand(2:10)
+    y = rand(2:9)
+    for i in 1:x-1
+        move!(r, Ost)
+    end
+    for j in 1:y-1
+        move!(r, Nord)
+    end
+end
+
+function find_border!(r, side)::Integer
+    n  = 0
+    while !isborder(r, side)
+        move!(r, side)
+        n += 1
+    end
+    return n
+end
+
+function change_side(side::HorizonSide)::HorizonSide
+    return HorizonSide(mod(Int(side) + 1, 4))
+end
+
+function mark_perim!(r, side)
+    while !ismarker(r)
+        putmarker!(r)
+        move!(r, side)
+        if isborder(r, side)
+            side = change_side(side)
+        end
+    end
+end
+
+function go_back!(r, count_steps, side)
+    for i in 1:count_steps
+        move!(r, side)
+    end
+end
+
+r = Robot(animate=true)
+random_place(r)
+count_steps = find_border!(r, Ost)
+mark_perim!(r, Nord)
+go_back!(r, count_steps, West)
