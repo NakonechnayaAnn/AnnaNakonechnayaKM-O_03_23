@@ -1,0 +1,46 @@
+using HorizonSideRobots
+import Random
+
+function random_place(r)
+    x = rand(2:10)
+    y = rand(2:9)
+    for i in 1:x-1
+        move!(r, Ost)
+    end
+    for j in 1:y-1
+        move!(r, Nord)
+    end
+end
+
+function inverse(side::HorizonSide)::HorizonSide
+    return HorizonSide(mod(Int(side)+2, 4))
+end
+
+function num_steps_marked!(r, side)
+    n = 0
+    while !isborder(r, side)
+        move!(r, side)
+        putmarker!(r)
+        n += 1
+    end
+    side = inverse(side)
+    for i in 1:n
+        move!(r, side)
+    end
+end
+
+function mark_cross!(r)
+    for i in 0:3
+        num_steps_marked!(r, HorizonSide(i))
+    end
+    putmarker!(r)
+end
+
+r = Robot(animate=true)
+random_place(r)
+mark_cross!(r)
+
+
+
+
+
