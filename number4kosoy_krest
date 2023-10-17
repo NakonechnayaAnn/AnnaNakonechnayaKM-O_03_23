@@ -1,0 +1,46 @@
+using HorizonSideRobots
+
+function random_place(r)
+    x = rand(2:10)
+    y = rand(2:9)
+    for i in 1:x-1
+        move!(r, Ost)
+    end
+    for j in 1:y-1
+        move!(r, Nord)
+    end
+end
+
+function along!(r, side)
+    while !isborder(r, side)
+        move!(r, side)
+    end
+end
+
+function go_corner!(r, side1, side2)
+    along!(r, side1)
+    along!(r, side2)
+end
+
+function mark_diag!(r, side1, side2)
+    putmarker!(r)
+    while !isborder(r, side2)
+        move!(r, side1)
+        move!(r, side2)
+        putmarker!(r)
+    end
+end
+
+function along!(r, side)
+    while !isborder(r, side)
+        move!(r, side)
+    end
+end
+
+const n = 12
+r = Robot(n, n, animate=true)
+random_place(r)
+go_corner!(r, Ost, Nord)
+mark_diag!(r, Sud, West)
+along!(r, Nord)
+mark_diag!(r, Sud, Ost)
