@@ -1,0 +1,52 @@
+using HorizonSideRobots
+
+function random_place(r)
+    x = rand(2:10)
+    y = rand(2:9)
+    for i in 1:x-1
+        move!(r, Ost)
+    end
+    for j in 1:y-1
+        move!(r, Nord)
+    end
+    return x, y
+end
+
+function along!(r, side)
+    while !isborder(r, side)
+        move!(r, side)
+    end
+end
+
+function go_corner!(r, side1, side2)
+    along!(r, side1)
+    along!(r, side2)
+end
+
+function inverse(side::HorizonSide)::HorizonSide
+    return HorizonSide(mod(Int(side)+2, 4))
+end
+
+function mark_along!(r, side)
+    putmarker!(r)
+    while !isborder(r, side)
+        move!(r, side)
+        putmarker!(r)
+    end
+end
+
+function mark_all!(r, side, side_row)
+    while true
+        mark_along!(r, side)
+        if isborder(r, side_row)
+            break
+        end
+        side = inverse(side)
+        move!(r, side_row)
+    end
+end
+
+r = Robot(animate=true)
+a = random_place(r)
+go_corner!(r, Ost, Nord)
+mark_all!(r, West, Sud)
