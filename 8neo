@@ -1,0 +1,56 @@
+using HorizonSideRobots
+
+function start_pos!(r)
+    for i in 1:8
+        move!(r, Nord)
+    end
+    for i in 1:8
+        move!(r, Ost)
+    end
+end
+
+function round!(r, steps_west, steps_nord, steps_ost, steps_sud)::Bool
+    for i in 1:steps_west
+        move!(r, West)
+        if ismarker(r)
+            return false
+        end
+    end
+    for i in 1:steps_nord
+        move!(r, Nord)
+        if ismarker(r)
+            return false
+        end
+    end
+    for i in 1:steps_ost
+        move!(r, Ost)
+        if ismarker(r)
+            return false
+        end
+    end
+    for i in 1:steps_sud
+        move!(r, Sud)
+        if ismarker(r)
+            return false
+        end
+        
+    end
+    return true
+end
+
+function find_mark!(r, steps_west, steps_nord, steps_ost, steps_sud)
+    steps_west = 1
+    steps_nord = 1
+    steps_ost = 2
+    steps_sud = 2
+    while  round!(r, steps_west, steps_nord, steps_ost, steps_sud)
+        steps_west += 2
+        steps_nord += 2
+        steps_ost += 2
+        steps_sud += 2
+    end
+end
+
+r = Robot(16, 16, animate=true) #подразумевается, что неограниченное поле
+start_pos!(r)
+find_mark!(r, 1, 1, 2, 2)
