@@ -1,0 +1,116 @@
+using HorizonSideRobots
+
+function random_place(r)
+    x = rand(2:11)
+    y = rand(2:11)
+    for i in 1:x-1
+        move!(r, Ost)
+    end
+    for j in 1:y-1
+        move!(r, Nord)
+    end
+end
+
+function corner!(r)
+    x = 0
+    y = 0
+    while !isborder(r, Sud)
+        move!(r, Sud)
+        y += 1
+    end
+    while !isborder(r, West)
+        move!(r, West)
+        x += 1
+    end
+    return x, y
+end
+
+function num_steps!(r, side)::Integer
+    n = 0
+    while !(isborder(r, side))
+        move!(r, side)
+        n += 1
+    end
+    return n
+end
+
+function mark_one!(r, side)
+    while !isborder(r, side)
+        move!(r, side)
+        putmarker!(r)
+    end
+end
+
+function mark_perim!(r)
+    putmarker!(r)
+    mark_one!(r, Nord)
+    mark_one!(r, Ost)
+    mark_one!(r, Sud)
+    mark_one!(r, West)
+end
+
+function inverse(side::HorizonSide)::HorizonSide 
+	return HorizonSide(mod(Int(side)+2, 4))
+end
+
+function find_border!(r, side, side1)
+    for i in 1:12
+        if num_steps!(r, side)!=11
+            return 
+        end
+        move!(r, side1)
+        side = inverse(side)
+    end
+end
+
+function one!(r, side, side1)
+    while true
+        move!(r, side)
+        putmarker!(r)
+        if !isborder(r, side1)
+            break
+        end
+    end
+end
+
+function finish_mark!(r)
+    move!(r, West)
+    while !ismarker(r)
+        putmarker!(r)
+        move!(r, West)
+    end
+end
+
+function mark_ram!(r)
+    putmarker!(r)
+    if isborder(r, Nord)
+        one!(r, West, Nord)
+        one!(r, Nord, Ost)
+        one!(r, Ost, Sud)
+        one!(r, Sud, West)
+    else
+        one!(r, West, Sud)
+        one!(r, Sud, Ost)
+        one!(r, Ost, Nord)
+        one!(r, Nord, West)
+    end
+    finish_mark!(r)
+end
+
+function basa!(r, corn)
+    for i in 1:corn[1]
+        move!(r, Ost)
+    end
+    for i in 1:corn[2]
+        move!(r, Nord)
+    end
+end
+
+r = Robot(12, 12, animate=true)
+random_place(r)
+corn = corner!(r)
+mark_perim!(r)
+find_border!(r, Nord, Ost)
+mark_ram!(r)
+a = corner!(r)
+basa!(r, corn)
