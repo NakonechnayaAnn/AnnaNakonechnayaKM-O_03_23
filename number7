@@ -1,0 +1,33 @@
+using HorizonSideRobots
+
+function flag(r)::Bool
+    if isborder(r, Nord)
+        return true
+    end
+    return false
+end
+
+function along!(r, side, n)
+    for i in 1:n
+        move!(r, side)
+    end
+end
+
+function inverse(side::HorizonSide)::HorizonSide 
+	return HorizonSide(mod(Int(side)+2, 4))
+end
+
+
+function ahead!(r, side)
+    n = 1
+    f = flag(r)
+    while f
+        along!(r, side, n)
+        f = flag(r)
+        n = n+1
+        side = inverse(side)
+    end
+end
+
+r = Robot(14, 14, animate=true)
+ahead!(r, Ost)
