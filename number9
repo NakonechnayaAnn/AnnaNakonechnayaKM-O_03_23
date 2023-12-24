@@ -1,0 +1,90 @@
+using HorizonSideRobots
+
+function random_place(r)
+    X, Y = 0, 0
+    x = rand(2:10)
+    y = rand(2:9)
+    for i in 1:x-1
+        move!(r, Ost)
+        X += 1
+    end
+    for j in 1:y-1
+        move!(r, Nord)
+        Y += 1
+    end
+    putmarker!(r)
+    return X, Y
+end
+
+function find_border!(r)
+    count = 0
+    while !isborder(r, Nord)
+        move!(r, Nord)
+        count += 1
+    end
+    while !isborder(r, Ost)
+        move!(r, Ost)
+        count += 1
+    end
+    return count
+end
+
+function inverse(side)
+    if side == Ost
+        side = West
+    else
+        side = Ost
+    end
+end
+
+function mark_str!(r, side)
+    n = 1
+    while !isborder(r, side)
+        move!(r, side)
+        n += 1
+        if n%2 == 0
+            putmarker!(r)
+        end
+    end
+end
+
+
+function mark_str2!(r, side)
+    n = 1
+    putmarker!(r)
+    while !isborder(r, side)
+        move!(r, side)
+        n += 1
+        if n%2 == 1
+            putmarker!(r)
+        end
+    end
+end
+
+
+function mark_all!(r, side, side_up, count)
+    while true
+        if count %2 == 0
+            mark_str2!(r, side)
+        else
+            mark_str!(r, side)
+        end
+        if isborder(r, side_up)
+            break
+        end
+        move!(r, side_up)
+        side = inverse(side)
+    end
+end
+
+r = Robot(animate=true)
+a = random_place(r)
+count = find_border!(r)
+mark_all!(r, West, Sud, count)
+for i in 1:a[2]
+    move!(r, Nord)
+end
+for i in 1:a[1]
+    move!(r, Ost)
+end
+
