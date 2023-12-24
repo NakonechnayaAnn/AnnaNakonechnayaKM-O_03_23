@@ -1,0 +1,11 @@
+using HorizonSideRobots
+
+function rec(r, side)
+    move!(r, side)
+    if !isborder(r, side)
+        rec(r, side)
+    end
+end
+
+r = Robot(animate=true)
+rec(r, Ost)
