@@ -1,0 +1,6 @@
+function summa(array::Vector)
+if length(array) == 0
+return 0
+end
+ return summa(@view(array[1:end-1]))+array[end]
+end
