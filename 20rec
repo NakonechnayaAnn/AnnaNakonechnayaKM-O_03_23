@@ -1,0 +1,20 @@
+using HorizonSideRobots
+
+function inverse(side::HorizonSide)::HorizonSide 
+	return HorizonSide(mod(Int(side)+2, 4))
+end
+
+
+function rec(r, side)
+    move!(r, side)
+    if !isborder(r, side)
+        rec(r, side)
+    else
+        putmarker!(r)
+    end
+    side = inverse(side)
+    move!(r, side)
+end
+
+r = Robot(animate=true)
+rec(r, Ost)
