@@ -1,0 +1,45 @@
+using HorizonSideRobots
+
+function inverse(side::HorizonSide)::HorizonSide 
+	return HorizonSide(mod(Int(side)+2, 4))
+end
+
+function find_border!(r, side)::Integer
+    n = 0
+    while !isborder(r, side)
+        move!(r, side)
+        n += 1
+    end
+    return n
+end
+
+
+function rec(r, side, side_bord)
+    move!(r, side)
+    if isborder(r, side_bord)
+        rec(r, side, side_bord)
+    else
+        move!(r, side_bord)
+    end
+    side = inverse(side)
+    move!(r, side)
+end
+
+function go!(r, side, n)::Bool
+    for i in 1:n
+        if isborder(r, side)
+            return false
+        end
+        move!(r, side)
+    end
+    return true
+end
+
+r = Robot(animate=true)
+n = find_border!(r, Ost)
+n *= 2
+rec(r, Nord, Ost)
+go!(r, Ost, n)
+
+
+#3 - try_except
