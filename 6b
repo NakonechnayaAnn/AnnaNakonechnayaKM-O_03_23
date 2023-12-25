@@ -1,0 +1,54 @@
+using HorizonSideRobots
+
+function random_place(r)
+    x = rand(2:10)
+    y = rand(2:9)
+    for i in 1:x-1
+        move!(r, Ost)
+    end
+    for j in 1:y-1
+        move!(r, Nord)
+    end
+    putmarker!(r)
+    return x, y
+end
+
+
+function corner2!(r, side, side2)
+    x, y = 0, 0
+    while !(isborder(r, side) && isborder(r, side2))
+        while !isborder(r, side)
+            move!(r, side)
+            x += 1
+        end
+        while !isborder(r, side2)
+            move!(r, side2)
+            y += 1
+        end
+    end
+    return x, y
+end
+
+function along!(r, side, x)
+    k = 1
+    while !isborder(r, side)
+        move!(r, side)
+        k += 1
+        if k == x
+            putmarker!(r)
+        end
+    end
+end
+
+n = 12
+r = Robot(n, n, animate=true)
+c = random_place(r)
+m = corner2!(r, West, Sud)
+cord1 = c[1]
+cord2 = c[2]
+cord3 = n - m[1]
+cord4 = n - m[2]
+along!(r, Ost, cord1)
+along!(r, Nord, cord2)
+along!(r, West, cord3)
+along!(r, Sud, cord4)
